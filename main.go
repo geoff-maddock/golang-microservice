@@ -16,16 +16,18 @@ func main() {
 	log := log.New(os.Stdout, "product-api", log.LstdFlags)
 
 	// create handlers
-	hh := handlers.NewHello(log)
-	gh := handlers.NewGoodbye(log)
-
+	// hh := handlers.NewHello(log)
+	// gh := handlers.NewGoodbye(log)
 	ph := handlers.NewProducts(log)
 
 	sm := http.NewServeMux()
-	sm.Handle("/hello", hh)
-	sm.Handle("/goodbye", gh)
-	sm.Handle("/products", ph)
 
+	// handle routes
+	// sm.Handle("/hello", hh)
+	// sm.Handle("/goodbye", gh)
+	sm.Handle("/", ph)
+
+	// configure our server instance
 	s := &http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
