@@ -20,6 +20,7 @@ func main() {
 	// gh := handlers.NewGoodbye(log)
 	ph := handlers.NewProducts(log)
 
+	// create a new serve mux and then add handler
 	sm := http.NewServeMux()
 
 	// handle routes

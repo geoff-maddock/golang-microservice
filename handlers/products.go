@@ -21,7 +21,7 @@ func (p *Products) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// handle an update
+	// handle an update to a resource
 	if r.Method == http.MethodPut {
 
 	}
