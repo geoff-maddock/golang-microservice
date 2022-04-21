@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/geoff-maddock/golang-microservice/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -16,17 +17,25 @@ func main() {
 	log := log.New(os.Stdout, "product-api", log.LstdFlags)
 
 	// create handlers
-	// hh := handlers.NewHello(log)
-	// gh := handlers.NewGoodbye(log)
 	ph := handlers.NewProducts(log)
 
 	// create a new serve mux and then add handler
-	sm := http.NewServeMux()
+	// sm := http.NewServeMux()
+	sm := mux.NewRouter()
 
-	// handle routes
-	// sm.Handle("/hello", hh)
-	// sm.Handle("/goodbye", gh)
-	sm.Handle("/", ph)
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/", ph.GetProducts)
+
+	putRouter := sm.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProduct)
+	putRouter.Use(ph.MiddlewareProductValidation)
+
+	postRouter := sm.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/", ph.AddProduct)
+	postRouter.Use(ph.MiddlewareProductValidation)
+
+	// // handle routes
+	// sm.Handle("/", ph)
 
 	// configure our server instance
 	s := &http.Server{
