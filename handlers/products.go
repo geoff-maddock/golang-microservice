@@ -65,11 +65,20 @@ type KeyProduct struct{}
 
 func (p Products) MiddlewareProductValidation(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+
 		prod := data.Product{}
 		err := prod.FromJSON(r.Body)
-
 		if err != nil {
-			http.Error(rw, "Unable to unmarshal json", http.StatusInternalServerError)
+			p.log.Println("[ERROR] deserializing product", err)
+			http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
+			return
+		}
+
+		// validate the product
+		err = prod.Validate()
+		if err != nil {
+			p.log.Println("[ERROR] validating product", err)
+			http.Error(rw, "Error validating product", http.StatusBadRequest)
 			return
 		}
 

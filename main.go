@@ -20,7 +20,6 @@ func main() {
 	ph := handlers.NewProducts(log)
 
 	// create a new serve mux and then add handler
-	// sm := http.NewServeMux()
 	sm := mux.NewRouter()
 
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
@@ -34,9 +33,6 @@ func main() {
 	postRouter.HandleFunc("/", ph.AddProduct)
 	postRouter.Use(ph.MiddlewareProductValidation)
 
-	// // handle routes
-	// sm.Handle("/", ph)
-
 	// configure our server instance
 	s := &http.Server{
 		Addr:         ":9090",
@@ -47,8 +43,6 @@ func main() {
 	}
 
 	// listen for http requests
-	//s.ListenAndServe()
-
 	go func() {
 		err := s.ListenAndServe()
 		if err != nil {
@@ -57,10 +51,10 @@ func main() {
 		}
 	}()
 
+	// termination signals
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 	signal.Notify(sigChan, os.Kill)
-	//signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 
 	sig := <-sigChan
 	log.Println("Received terminate, graceful shutdown", sig)
