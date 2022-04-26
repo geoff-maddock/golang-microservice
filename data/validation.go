@@ -66,17 +66,18 @@ func NewValidation() *Validation {
 //			fmt.Println()
 //	}
 func (v *Validation) Validate(i interface{}) ValidationErrors {
-	errs := v.validate.Struct(i).(validator.ValidationErrors)
-
-	if len(errs) == 0 {
-		return nil
-	}
-
 	var returnErrs []ValidationError
-	for _, err := range errs {
-		// cast the FieldError into our ValidationError and append to the slice
-		ve := ValidationError{err.(validator.FieldError)}
-		returnErrs = append(returnErrs, ve)
+
+	if errs, ok := v.validate.Struct(i).(validator.ValidationErrors); ok {
+
+		if errs != nil {
+			for _, err := range errs {
+				if fe, ok := err.(validator.FieldError); ok {
+					ve := ValidationError{fe}
+					returnErrs = append(returnErrs, ve)
+				}
+			}
+		}
 	}
 
 	return returnErrs

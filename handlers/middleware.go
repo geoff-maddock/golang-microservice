@@ -35,7 +35,7 @@ func (p *Products) MiddlewareValidateProduct(next http.Handler) http.Handler {
 		}
 
 		// add the product to the context
-		ctx := context.WithValue(r.Context(), KeyProduct{}, prod)
+		ctx := context.WithValue(r.Context(), KeyProduct{}, *prod)
 		r = r.WithContext(ctx)
 
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
